@@ -32,8 +32,8 @@ class QrCode(models.Model):
     class Meta:
         verbose_name = 'QRCode'
         verbose_name_plural = 'QR kodlar'
-        db_table = 'QrCode'
+        db_table = 'qrcode'
         ordering = ['-created_at']
 
     def __str__(self):
-        return self.created_at
+        return f'self.created_at'

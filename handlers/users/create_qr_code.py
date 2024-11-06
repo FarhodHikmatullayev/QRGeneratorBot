@@ -1,7 +1,21 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-
+from io import BytesIO
 from loader import dp, db
+import secrets
+import string
+import qrcode
+
+
+async def generate_unique_code(length=30):
+    characters = string.ascii_letters + string.digits
+
+    unique_code = ''.join(secrets.choice(characters) for _ in range(length))
+    qr_codes = await db.select_qr_codes(information=unique_code)
+    while qr_codes:
+        unique_code = ''.join(secrets.choice(characters) for _ in range(length))
+        qr_codes = await db.select_qr_codes(information=unique_code)
+    return unique_code
 
 
 @dp.message_handler(text="🛠️ Generate QR", state="*")
@@ -27,7 +41,26 @@ async def generate_qr_code(message: types.Message, state: FSMContext):
         await message.reply(text="🚫 Sizda bu buyruqdan foydalanish uchun ruxsat mavjud emas")
         return
     else:
-        print('generate funksiyasi ishlayapti')
-        # qr_code = await db.create_qr_code(
-        #     information=,
-        # )
+        unique_code = await generate_unique_code()
+        new_qr_code = await db.create_qr_code(
+            information=unique_code
+        )
+
+        # generate QR code with information
+        data = unique_code
+
+        qr = qrcode.QRCode(
+            version=1,  # QR kod versiyasi (1 dan 40 gacha)
+            error_correction=qrcode.constants.ERROR_CORRECT_L,  # Xato to'g'rilash darajasi
+            box_size=10,  # Har bir qismning o'lchami
+            border=4,  # Qoplama chegarasi
+        )
+        qr.add_data(data)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
+
+        img_byte_arr = BytesIO()
+        img.save(img_byte_arr, format='PNG')
+        img_byte_arr.seek(0)
+
+        await message.answer_photo(photo=img_byte_arr)

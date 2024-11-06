@@ -97,29 +97,29 @@ class Database:
     # for qr codes
     async def create_qr_code(self, information, is_active=True, created_at=datetime.now()):
         sql = """
-        INSERT INTO QrCode (information, is_active, created_at) 
+        INSERT INTO qrcode (information, is_active, created_at) 
         VALUES ($1, $2, $3) RETURNING *
         """
         return await self.execute(sql, information, is_active, created_at, fetchrow=True)
 
     async def select_qr_code(self, qr_code_id):
-        sql = "SELECT * FROM QrCode WHERE id = $1"
+        sql = "SELECT * FROM qrcode WHERE id = $1"
         return await self.execute(sql, qr_code_id, fetchrow=True)
 
     async def select_all_qr_codes(self):
-        sql = "SELECT * FROM QrCode"
+        sql = "SELECT * FROM qrcode"
         return await self.execute(sql, fetch=True)
 
     async def select_qr_codes(self, **kwargs):
-        sql = "SELECT * FROM QrCode WHERE "
+        sql = "SELECT * FROM qrcode WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
         return await self.execute(sql, *parameters, fetch=True)
 
     async def update_qr_code(self, qr_code_id, **kwargs):
         set_clause = ", ".join([f"{key} = ${i + 1}" for i, key in enumerate(kwargs.keys())])
-        sql = f"UPDATE QrCode SET {set_clause} WHERE id = ${len(kwargs) + 1} RETURNING *"
+        sql = f"UPDATE qrcode SET {set_clause} WHERE id = ${len(kwargs) + 1} RETURNING *"
         return await self.execute(sql, *kwargs.values(), qr_code_id, fetchrow=True)
 
     async def delete_qr_code(self, qr_code_id):
-        sql = "DELETE FROM QrCode WHERE id = $1 RETURNING *"
+        sql = "DELETE FROM qrcode WHERE id = $1 RETURNING *"
         return await self.execute(sql, qr_code_id, fetchrow=True)
