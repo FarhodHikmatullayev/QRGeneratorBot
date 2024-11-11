@@ -12,7 +12,7 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(QrCode)
 class QrCodeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'is_active', "created_at")
+    list_display = ('id', 'user_name', 'is_active', "created_at")
     list_filter = ('is_active', 'created_at')
-    search_fields = ('information',)
+    search_fields = ('information', 'user_name')
     date_hierarchy = 'created_at'

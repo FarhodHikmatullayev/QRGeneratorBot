@@ -1,3 +1,4 @@
+import json
 import os
 import cv2
 from aiogram import types
@@ -40,17 +41,30 @@ async def scan_qr_code(message: types.Message, state: FSMContext):
     img = cv2.imread(file_path)
     detector = cv2.QRCodeDetector()
     data, bbox, _ = detector.detectAndDecode(img)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    # parsed_data = json.loads(data)
+    # print('parsed_data', parsed_data)
+    # print('data', data)
     if not data:
         await message.answer(text="❌❌ Bunday QR kod topilmadi")
+        return
+
+    # unique_code = parsed_data.get('unique_code')
+    # user_name = parsed_data.get('user_name')
+    # print('unique_code', unique_code)
 
     qr_codes = await db.select_qr_codes(information=data)
     if not qr_codes:
         await message.answer(text="❌❌ QR kod topilmadi")
     else:
         qr_code = qr_codes[0]
+        user_name = qr_code['user_name']
         qr_is_active = qr_code['is_active']
         if qr_is_active:
             await db.update_qr_code(qr_code_id=qr_code['id'], is_active=False)
-            await message.answer(text="✅✅ QR kod muvaffaqiyatli ro'yxatdan o'tkazildi")
+            await message.answer(text=f"✅✅ QR kod muvaffaqiyatli ro'yxatdan o'tkazildi.\n"
+                                      f"QR kod egasi: {user_name}")
         else:
-            await message.answer(text="🛑🛑 Kechirasiz, bu QR koddan ilgari foydalanilgan")
+            await message.answer(text=f"🛑🛑 Kechirasiz, bu QR koddan ilgari foydalanilgan.\n"
+                                      f"QR kod egasi: {user_name}")

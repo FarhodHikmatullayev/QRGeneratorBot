@@ -25,6 +25,7 @@ class User(models.Model):
 
 
 class QrCode(models.Model):
+    user_name = models.CharField(max_length=221, null=True, blank=True, verbose_name="QR kod egasi ismi")
     information = models.CharField(unique=True, max_length=30, null=True, blank=True, verbose_name="Qr information")
     is_active = models.BooleanField(default=True, verbose_name="Faollik holati")
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True, verbose_name="Yaratilgan vaqti")
@@ -36,4 +37,7 @@ class QrCode(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f'self.created_at'
+        if self.user_name:
+            return self.user_name
+        else:
+            return f'{self.created_at}'

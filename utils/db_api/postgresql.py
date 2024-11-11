@@ -95,12 +95,12 @@ class Database:
         return await self.execute(sql, user_id, fetchrow=True)
 
     # for qr codes
-    async def create_qr_code(self, information, is_active=True, created_at=datetime.now()):
+    async def create_qr_code(self, information, user_name, is_active=True, created_at=datetime.now()):
         sql = """
-        INSERT INTO qrcode (information, is_active, created_at) 
-        VALUES ($1, $2, $3) RETURNING *
+        INSERT INTO qrcode (information, user_name, is_active, created_at) 
+        VALUES ($1, $2, $3, $4) RETURNING *
         """
-        return await self.execute(sql, information, is_active, created_at, fetchrow=True)
+        return await self.execute(sql, information, user_name, is_active, created_at, fetchrow=True)
 
     async def select_qr_code(self, qr_code_id):
         sql = "SELECT * FROM qrcode WHERE id = $1"
