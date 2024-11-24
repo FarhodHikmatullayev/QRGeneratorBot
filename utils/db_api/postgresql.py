@@ -15,7 +15,6 @@ class Database:
         self.pool: Union[Pool, None] = None
 
     async def create(self):
-        print('DEVELOPMENT_MODE', DEVELOPMENT_MODE)
         if DEVELOPMENT_MODE:
             self.pool = await asyncpg.create_pool(
                 user=config.DB_USER,
@@ -95,7 +94,8 @@ class Database:
         return await self.execute(sql, user_id, fetchrow=True)
 
     # for qr codes
-    async def create_qr_code(self, information, user_name, is_active=True, created_at=datetime.now()):
+    async def create_qr_code(self, information, user_name, is_active=True):
+        created_at = datetime.now()
         sql = """
         INSERT INTO qrcode (information, user_name, is_active, created_at) 
         VALUES ($1, $2, $3, $4) RETURNING *

@@ -64,8 +64,29 @@ async def get_user_name(message: types.Message, state: FSMContext):
     #     'user_name': user_name
     # }
     # json_data = json.dumps(data)
-    data = unique_code
 
+
+    # data = unique_code
+    # for i in range(1, 101):
+    #     data = f"https://t.me/benisonfeedbackbot?start=M{i}"
+    #
+    #     qr = qrcode.QRCode(
+    #         version=1,  # QR kod versiyasi (1 dan 40 gacha)
+    #         error_correction=qrcode.constants.ERROR_CORRECT_L,  # Xato to'g'rilash darajasi
+    #         box_size=10,  # Har bir qismning o'lchami
+    #         border=4,  # Qoplama chegarasi
+    #     )
+    #     qr.add_data(data)
+    #     qr.make(fit=True)
+    #     img = qr.make_image(fill_color="black", back_color="white")
+    #
+    #     img_byte_arr = BytesIO()
+    #     img.save(img_byte_arr, format='PNG')
+    #     img_byte_arr.seek(0)
+    #
+    #     await message.answer_photo(photo=img_byte_arr, caption=f"M{i}")
+
+    data = unique_code
     qr = qrcode.QRCode(
         version=1,  # QR kod versiyasi (1 dan 40 gacha)
         error_correction=qrcode.constants.ERROR_CORRECT_L,  # Xato to'g'rilash darajasi
